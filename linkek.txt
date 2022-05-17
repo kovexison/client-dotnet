@@ -1,0 +1,9 @@
+Delete user:
+https://localhost:44348/WebService1.asmx/deleteUser?nume=Petru&password=utcn2019
+
+
+Calories burned grafikon:
+https://localhost:44348/WebService1.asmx/calBurnedList?id_user=2
+
+BMR return:
+https://localhost:44348/WebService1.asmx/getBmr?id_stats=12
