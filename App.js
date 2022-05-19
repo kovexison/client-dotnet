@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import './App.css';
 
-import Login from "./components/Login";
 import Register from "./components/Register";
 import MainPage from "./components/MainPage";
 import React, {useState} from "react";
@@ -24,9 +23,9 @@ import UserStatsMenu from "./components/UserStatsMenu";
           <Routes>
             <Route path={"/"} element={<MainPage />}/>
             <Route path={"/register"} element={<Register />}/>
-            <Route path={"/select-workout"} element={<ListSports />} />
+            <Route path={"/select-workout/:userID"} element={<ListSports />} />
             <Route path={"/delete-account"} element={<DeleteAccount />} />
-            <Route path={"/user-stats"} element={<UserStatsMenu />} />
+            <Route path={"/user-stats/:activityName/:userID"} element={<UserStatsMenu />} />
           </Routes>
         </Router>
       </div>  

@@ -23,7 +23,7 @@ export default (props) => {
             if(id !== -1){
                 console.log(id);
                 props.onLogin(id);
-                window.open("./select-workout","_self");
+                window.open("./select-workout/" + id,"_self");
             } else {
                 //todo not logged in page
                 toast("Wrong username or password."); //send notification from not logged-in error

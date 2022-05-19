@@ -1,9 +1,15 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import axios from "axios";
-import {collapseToast, toast, ToastContainer} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 import "./static/userStats.css"
+import {useParams} from "react-router-dom";
 
-export default (props) => {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default () => {
+    const params = useParams();
+    const sportName = params.activityName;
+    const user_ID = params.userID;
+
     const [weight, setWeight] = useState("");
     const [height, setHeight] = useState("");
     const [age, setAge] = useState("");
@@ -13,54 +19,99 @@ export default (props) => {
     let lastUserEntry;
     let activityMet;
     let caloriesBurned;
-    let sportName = props.content;
+    let activityID;
 
+    axios.get("https://localhost:44348/WebService1.asmx/getActivityId?activityName=" + sportName, {
+        headers: {'Content-Type': 'application/xml'}
+    }).then(resp => {
+        activityID = resp.data;
+        console.log(sportName + " activity ID is " + activityID);
+    }).catch(err => {
+        console.log(err);
+    });
 
-    let nextClicked = () => {
-        if(weight > 30 && height > 100 && age > 7) {
-            const secondForm = document.querySelector(".user-feedback");
-            const firstForm = document.querySelector(".user-stats");
+    let getActivityMet = () => {
+        let returnValue;
+        axios.get("https://localhost:44348/WebService1.asmx/activityMets?activity=" + sportName).then(
+            resp => {
+                returnValue = resp.data;
+                document.getElementById("activityMets").value = activityMet;
+            }
+        ).catch(err => {
+            console.log(err);
+        });
+        return returnValue;
+    };
 
-            axios.get("https://localhost:44348/WebService1.asmx/addUserStat?greutate=" + weight + "&inaltime=" + height + "&varsta=" + age,{
+    activityMet = getActivityMet();
+
+    function getLastEntry() {
+        let lastEntry;
+        axios.get("https://localhost:44348/WebService1.asmx/addUserStat?greutate=" + weight + "&inaltime=" + height + "&varsta=" + age + "&userID=" + user_ID, {
+            headers: {'Content-Type': 'application/xml'}
+        }).then(resp => {
+            lastEntry = resp.data;
+            console.log("Raspuns addUserStat: " + resp.data);
+            console.log("Last entry:" + lastEntry);
+            lastUserEntry = lastEntry;
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
+    let sleep = (ms) => {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    let calculateClicked = () => {
+        if (time > 0) {
+            axios.get("https://localhost:44348/WebService1.asmx/getBmr?id_stats=" + lastUserEntry, {
                 headers: {'Content-Type': 'application/xml'}
-            }).then(resp => {
-                lastUserEntry = resp.data;
-                console.log("Raspuns addUserStat: " + lastUserEntry);
+            }).then(res => {
+                document.getElementById("bmr").value = res.data;
+                caloriesBurned = time * activityMet * weight / 200;
+                document.getElementById("kcal").value = caloriesBurned;
             }).catch(err => {
                 console.log(err);
             });
+        } else {
+            toast("You have to add a value as time greater than 0.");
+        }
+    }
 
-            axios.get("https://localhost:44348/WebService1.asmx/activityMets?").then(
-                resp => {
-                    activityMet = resp.data;
-                    document.getElementById("activityMets").value = activityMet;
-                }
-            ).catch(err => {
+
+
+    let nextClicked = () => {
+        if (weight > 30 && height > 100 && age > 7) {
+            const secondForm = document.querySelector(".user-feedback");
+            const firstForm = document.querySelector(".user-stats");
+            getLastEntry();
+            sleep(1200).then(resp => {
+                secondForm.style.marginLeft = "-98%";
+                firstForm.style.marginLeft = "+120%";
+            }).catch(err => {
                 console.log(err);
             });
-
-            secondForm.style.marginLeft = "-98%";
-            firstForm.style.marginLeft = "+120%";
         } else {
             toast("Please fill in your data. Weight > 30kg, height > 100cm, age > 7 yrs.");
         }
     };
 
     let backClicked = () => {
-        window.open("./select-workout","_self");
+        window.open("/select-workout/" + user_ID, "_self");
     };
 
     let storeActivity = () => {
-        if(distance === undefined){
-            axios.get("https://localhost:44348/WebService1.asmx/addActivityStats?time=" + time + "&mets=" + activityMet + "&distance=0&userLastStat=" + lastUserEntry,{
+        if (distance === undefined) {
+            axios.get("https://localhost:44348/WebService1.asmx/addActivityStats?time=" + time + "&distance=0&userLastStat=" + lastUserEntry + "&userID=" + user_ID + "&activityName=" + sportName, {
                 headers: {'Content-Type': 'application/xml'}
             }).then(resp => {
                 toast(resp.data);
             }).catch(err => {
                 console.log(err);
             });
-        } else if(distance > 0){
-            axios.get("https://localhost:44348/WebService1.asmx/addActivityStats?time=" + time + "&mets=" + activityMet + "&distance=" + distance + "&userLastStat=" + lastUserEntry,{
+        } else if (distance > 0) {
+            axios.get("https://localhost:44348/WebService1.asmx/addActivityStats?time=" + time + "&distance=" + distance + "&userLastStat=" + lastUserEntry + "&userID=" + user_ID + "&activityName=" + sportName, {
                 headers: {'Content-Type': 'application/xml'}
             }).then(resp => {
                 toast(resp.data);
@@ -74,7 +125,7 @@ export default (props) => {
     return (<div className={"wrapper"}>
         <div className={"title-text"}>
             <br/><br/>
-            <p className={"title-centered"}>About your {sportName} <br/><br/>
+            <p className={"title-centered"}>Details about your {sportName} <br/><br/>
                 Please fill in your data: </p>
             <br/>
         </div>
@@ -108,7 +159,7 @@ export default (props) => {
                         <button className={"form-button"} type={"button"} onClick={() => backClicked()}>Back to
                             workouts
                         </button>
-                        <ToastContainer />
+                        <ToastContainer/>
                     </div>
                 </form>
             </div>
@@ -122,7 +173,7 @@ export default (props) => {
                     </div>
                     <div className={"field"}>
                         <input type={"text"} className={"form-input"}
-                               placeholder={sportName + " distance (Optional)"}
+                               placeholder={sportName + " distance in km (Optional)"}
                                onChange={(event) => {
                                    setDistance(event.target.value)
                                }}/>
@@ -148,18 +199,7 @@ export default (props) => {
                         </button>
 
                         <br/>
-                        <button className={"form-button"} type={"button"} onClick={() => {
-                            axios.get("https://localhost:44348/WebService1.asmx/getBmr?id_stats=" + lastUserEntry,{
-                                headers: {'Content-Type': 'application/xml'}
-                            }).then(res => {
-                                document.getElementById("bmr").value = res.data;
-                                caloriesBurned = time * activityMet * weight / 200;
-                                document.getElementById("kcal").value = caloriesBurned;
-                            }).catch(err => {
-                                console.log(err);
-                            });
-
-                        }}>Calculate
+                        <button className={"form-button"} type={"button"} onClick={() => calculateClicked()}>Calculate
                         </button>
                         <br/>
                     </div>
@@ -169,8 +209,9 @@ export default (props) => {
                             progress
                         </button>
                         <button className={"form-button"} type={"button"} onClick={() => {
-                            window.open("./select-workout","_self");
-                        }}>Back to workout selection</button>
+                            window.open("/select-workout", "_self");
+                        }}>Back to workout selection
+                        </button>
                     </div>
                 </form>
             </div>

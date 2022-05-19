@@ -15,7 +15,7 @@ export default (props) => {
     }
 
 
-    let registerClicked = () => {
+    function registerClicked(){
         if (userName.length > 4) {
             if (password === password2) {
                 axios.get('https://localhost:44348/WebService1.asmx/signUp?Uname=' + userName + '&password=' + password,
