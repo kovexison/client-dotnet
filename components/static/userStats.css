@@ -1,0 +1,171 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700;900&display=swap');
+
+:root{
+    --white-light: rgba(255, 255, 255, 0.5);
+    --alice-blue: #f8f9fa;
+    --carribean-green: #40c9a2;
+    --gray: #ededed;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
+}
+
+html,body{
+    display: grid;
+    height: 100%;
+    place-items: center;
+    background: #40c9a2;
+}
+
+::selection{
+    background: var(--white-light);
+    color: #fff;
+}
+
+.wrapper{
+    max-width: 470px;
+    background: #fff;
+    box-shadow: 0px 15px 20px rgba(0,0,0,0.1);
+    padding: 30px;
+    border-radius: 9px;
+    overflow: hidden;
+}
+
+.text-light{
+    text-align: left;
+}
+
+.wrapper .title-text{
+    display: flex;
+    width: 200%;
+}
+
+.wrapper .title{
+    width: 50%;
+    font-size: 30px;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.wrapper .form-container{
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+}
+
+.title-text{
+    display: inline-flex;
+    font-size: 28px;
+}
+
+.title-centered{
+    width: 100%;
+    text-align: left;
+    margin-left: 45px;
+    margin-top: 40px;
+}
+
+.form-container .form-inner form{
+    width: 100%;
+    transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
+}
+
+.form-container .form-inner form .field{
+    height: 50px;
+    width: 100%;
+    margin-top: 20px;
+    margin-left: 30px;
+    margin-right: 40px;
+}
+
+.btn-layer{
+    display: flex;
+    margin-left: 40px;
+}
+
+.user-feedback{
+    width: 100%;
+    margin-left: 50px;
+}
+
+.form-button{
+    margin-left: 15px;
+}
+
+.field-btn{
+    display: flex;
+    margin-left: 52px;
+    margin-right: 8px;
+    margin-top: 15px;
+}
+
+.form-container .form-inner{
+    display: flex;
+    width: 200%;
+}
+
+.form-inner form .field input{
+    height: 100%;
+    width: 100%;
+    outline: none;
+    padding-left: 15px;
+    font-size: 17px;
+    border-radius: 5px;
+    border: 5px solid lightgray;
+    border-bottom-width: 2px;
+    transition: all 0.3s ease;
+}
+
+.form-inner form .field input::placeholder{
+    color: #999;
+    transition: all 0.3s ease;
+}
+
+form .field input:focus::placeholder{
+    color: #b3b3b3;
+}
+
+form .btn{
+    height: 50px;
+    width: 100%;
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+}
+form .btn button[type="button"]{
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    position: relative;
+    background: none;
+    border: none;
+    color: #fff;
+    padding-left: 0;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+#user-stats:checked ~ label.user-stats{
+    color: #fff;
+    cursor: default;
+    user-select: none;
+}
+#user-stats:checked ~ label.user-stats{
+    color: #000;
+}
+#user-feedback:checked ~ label.user-feedback{
+    color: #000;
+}
+#user-feedback:checked ~ label.user-feedback{
+    cursor: default;
+    user-select: none;
+}
+
+
